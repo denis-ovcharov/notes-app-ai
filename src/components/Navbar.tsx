@@ -4,7 +4,11 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 
 export default function Navbar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
@@ -26,6 +30,12 @@ export default function Navbar() {
                 >
                   Profile
                 </Link>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-red-600 hover:text-red-700 transition-colors font-medium cursor-pointer"
+                >
+                  Logout
+                </button>
               </>
             ) : (
               <>

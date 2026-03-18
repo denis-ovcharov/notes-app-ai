@@ -6,11 +6,11 @@ import { User } from '@/types/user';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { username, password } = body;
 
-    if (!email || !password) {
+    if (!username || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required' },
+        { error: 'Username and password are required' },
         { status: 400 }
       );
     }
@@ -18,11 +18,11 @@ export async function POST(request: Request) {
     const client = await clientPromise;
     const db = client.db('notes-app');
 
-    const user = await db.collection<User>('users').findOne({ email });
+    const user = await db.collection<User>('users').findOne({ username });
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { error: 'Invalid username or password' },
         { status: 401 }
       );
     }
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     if (!isPasswordValid) {
       return NextResponse.json(
-        { error: 'Invalid email or password' },
+        { error: 'Invalid username or password' },
         { status: 401 }
       );
     }
@@ -42,7 +42,6 @@ export async function POST(request: Request) {
     return NextResponse.json({
       user: {
         _id: user._id?.toString(),
-        email: user.email,
         username: user.username,
       },
     });

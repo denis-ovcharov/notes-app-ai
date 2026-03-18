@@ -6,19 +6,11 @@ import { User } from '@/types/user';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, username } = body;
+    const { username, password } = body;
 
-    if (!email || !password || !username) {
+    if (!username || !password) {
       return NextResponse.json(
-        { error: 'Email, password, and username are required' },
-        { status: 400 }
-      );
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
+        { error: 'Username and password are required' },
         { status: 400 }
       );
     }
@@ -33,11 +25,11 @@ export async function POST(request: Request) {
     const client = await clientPromise;
     const db = client.db('notes-app');
 
-    const existingUser = await db.collection<User>('users').findOne({ email });
+    const existingUser = await db.collection<User>('users').findOne({ username });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'User with this email already exists' },
+        { error: 'User with this username already exists' },
         { status: 409 }
       );
     }
@@ -46,18 +38,16 @@ export async function POST(request: Request) {
     const now = new Date();
 
     const result = await db.collection<User>('users').insertOne({
-      email,
-      password: hashedPassword,
       username,
+      password: hashedPassword,
       createdAt: now,
       updatedAt: now,
     });
 
     const newUser: User = {
       _id: result.insertedId.toString(),
-      email,
-      password: hashedPassword,
       username,
+      password: hashedPassword,
       createdAt: now,
       updatedAt: now,
     };
@@ -69,7 +59,6 @@ export async function POST(request: Request) {
       {
         user: {
           _id: newUser._id,
-          email: newUser.email,
           username: newUser.username,
         },
       },

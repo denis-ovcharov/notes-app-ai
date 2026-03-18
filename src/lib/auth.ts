@@ -22,7 +22,6 @@ export async function comparePassword(
 export async function createToken(user: User): Promise<string> {
   return new SignJWT({
     userId: user._id?.toString(),
-    email: user.email,
     username: user.username,
   })
     .setProtectedHeader({ alg: 'HS256' })
@@ -36,7 +35,6 @@ export async function verifyToken(token: string): Promise<UserSession | null> {
     const { payload } = await jwtVerify(token, JWT_SECRET);
     return {
       userId: payload.userId as string,
-      email: payload.email as string,
       username: payload.username as string,
     };
   } catch {

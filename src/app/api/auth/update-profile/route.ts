@@ -56,7 +56,6 @@ export async function PUT(request: Request) {
     return NextResponse.json({
       user: {
         userId: updatedUser._id,
-        email: updatedUser.email,
         username: updatedUser.username,
       },
     });
