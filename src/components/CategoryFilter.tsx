@@ -23,7 +23,7 @@ export default function CategoryFilter({ selectedCategory, onSelectCategory }: C
     <div className="flex flex-wrap gap-2 mb-6">
       <button
         onClick={() => onSelectCategory(null)}
-        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border cursor-pointer ${
           selectedCategory === null
             ? 'bg-gray-800 text-white border-gray-800'
             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
@@ -35,7 +35,7 @@ export default function CategoryFilter({ selectedCategory, onSelectCategory }: C
         <button
           key={category}
           onClick={() => onSelectCategory(category)}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border cursor-pointer ${
             selectedCategory === category
               ? 'bg-gray-800 text-white border-gray-800'
               : `${categoryColors[category]} hover:opacity-80`

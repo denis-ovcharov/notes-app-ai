@@ -128,7 +128,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold text-gray-800">My Notes</h1>
           <button
             onClick={() => setIsEditorOpen(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md cursor-pointer"
           >
             + New Note
           </button>

@@ -14,7 +14,7 @@ export default function DeleteConfirmModal({ isOpen, onConfirm, onCancel }: Dele
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
         <button
           onClick={onCancel}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -38,13 +38,13 @@ export default function DeleteConfirmModal({ isOpen, onConfirm, onCancel }: Dele
           <div className="flex gap-3 justify-center">
             <button
               onClick={onCancel}
-              className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium cursor-pointer"
             >
               No
             </button>
             <button
               onClick={onConfirm}
-              className="px-6 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors font-medium"
+              className="px-6 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors font-medium cursor-pointer"
             >
               Yes, Delete
             </button>

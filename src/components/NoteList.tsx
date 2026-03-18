@@ -60,7 +60,7 @@ export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
                 e.stopPropagation();
                 onDelete(note);
               }}
-              className="text-red-500 hover:text-red-700 transition-colors"
+              className="text-red-500 hover:text-red-700 transition-colors cursor-pointer border border-red-300 px-3 py-1 rounded hover:bg-red-50"
             >
               Delete
             </button>
