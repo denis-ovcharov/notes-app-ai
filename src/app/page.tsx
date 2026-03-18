@@ -145,11 +145,6 @@ export default function Home() {
           </div>
         ) : (
           <>
-            <NoteList
-              notes={notes}
-              onEdit={handleEditNote}
-              onDelete={handleDeleteNote}
-            />
             {pagination && (
               <Pagination
                 currentPage={pagination.page}
@@ -157,6 +152,11 @@ export default function Home() {
                 onPageChange={handlePageChange}
               />
             )}
+            <NoteList
+              notes={notes}
+              onEdit={handleEditNote}
+              onDelete={handleDeleteNote}
+            />
           </>
         )}
       </div>
