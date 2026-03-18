@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Note, NoteCategory } from '@/types/note';
 import NoteList from '@/components/NoteList';
 import NoteEditor from '@/components/NoteEditor';
 import CategoryFilter from '@/components/CategoryFilter';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Pagination from '@/components/Pagination';
+import Navbar from '@/components/Navbar';
+import { useAuth } from '@/components/AuthProvider';
 
 interface PaginationInfo {
   page: number;
@@ -16,6 +19,8 @@ interface PaginationInfo {
 }
 
 export default function Home() {
+  const { user, isLoading: authLoading } = useAuth();
+  const router = useRouter();
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -27,8 +32,16 @@ export default function Home() {
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
 
   useEffect(() => {
-    fetchNotes();
-  }, [selectedCategory, currentPage]);
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
+  useEffect(() => {
+    if (user) {
+      fetchNotes();
+    }
+  }, [selectedCategory, currentPage, user]);
 
   const fetchNotes = async () => {
     try {
@@ -121,8 +134,21 @@ export default function Home() {
     setCurrentPage(1);
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold text-gray-800">My Notes</h1>
@@ -174,6 +200,6 @@ export default function Home() {
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
       />
-    </main>
+    </div>
   );
 }

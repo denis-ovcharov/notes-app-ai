@@ -24,6 +24,7 @@ export interface Note {
   title: string;
   content: string;
   category: NoteCategory;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
 }

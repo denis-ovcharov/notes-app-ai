@@ -2,9 +2,19 @@ import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 import { Note, NoteCategory } from '@/types/note';
 import { ObjectId, Filter } from 'mongodb';
+import { getSession } from '@/lib/auth';
 
 export async function GET(request: Request) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category') as NoteCategory | null;
     const page = parseInt(searchParams.get('page') || '1', 10);
@@ -13,7 +23,10 @@ export async function GET(request: Request) {
     const client = await clientPromise;
     const db = client.db('notes-app');
 
-    const filter: Filter<Note> = category ? { category } : {};
+    const filter: Filter<Note> = { userId: session.userId };
+    if (category) {
+      filter.category = category;
+    }
 
     const total = await db.collection<Note>('notes').countDocuments(filter);
 
@@ -52,6 +65,15 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { title, content, category } = body;
 
@@ -70,6 +92,7 @@ export async function POST(request: Request) {
       title,
       content,
       category,
+      userId: session.userId,
       createdAt: now,
       updatedAt: now,
     });
@@ -79,6 +102,7 @@ export async function POST(request: Request) {
       title,
       content,
       category,
+      userId: session.userId,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
     };
