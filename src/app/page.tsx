@@ -6,6 +6,14 @@ import NoteList from '@/components/NoteList';
 import NoteEditor from '@/components/NoteEditor';
 import CategoryFilter from '@/components/CategoryFilter';
 import DeleteConfirmModal from '@/components/DeleteConfirmModal';
+import Pagination from '@/components/Pagination';
+
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
 
 export default function Home() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -15,21 +23,24 @@ export default function Home() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<NoteCategory | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
 
   useEffect(() => {
     fetchNotes();
-  }, [selectedCategory]);
+  }, [selectedCategory, currentPage]);
 
   const fetchNotes = async () => {
     try {
-      const url = selectedCategory 
-        ? `/api/notes?category=${selectedCategory}` 
-        : '/api/notes';
-      
+      const url = selectedCategory
+        ? `/api/notes?category=${selectedCategory}&page=${currentPage}&limit=12`
+        : `/api/notes?page=${currentPage}&limit=12`;
+
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
-        setNotes(data);
+        setNotes(data.notes);
+        setPagination(data.pagination);
       }
     } catch (error) {
       console.error('Error fetching notes:', error);
@@ -52,6 +63,7 @@ export default function Home() {
       });
 
       if (response.ok) {
+        setCurrentPage(1);
         await fetchNotes();
         setIsEditorOpen(false);
         setEditingNote(null);
@@ -100,6 +112,15 @@ export default function Home() {
     setEditingNote(null);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleCategorySelect = (category: NoteCategory | null) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -115,7 +136,7 @@ export default function Home() {
 
         <CategoryFilter
           selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+          onSelectCategory={handleCategorySelect}
         />
 
         {isLoading ? (
@@ -123,11 +144,20 @@ export default function Home() {
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
         ) : (
-          <NoteList
-            notes={notes}
-            onEdit={handleEditNote}
-            onDelete={handleDeleteNote}
-          />
+          <>
+            <NoteList
+              notes={notes}
+              onEdit={handleEditNote}
+              onDelete={handleDeleteNote}
+            />
+            {pagination && (
+              <Pagination
+                currentPage={pagination.page}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </div>
 

@@ -7,16 +7,22 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category') as NoteCategory | null;
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '12', 10);
 
     const client = await clientPromise;
     const db = client.db('notes-app');
 
     const filter: Filter<Note> = category ? { category } : {};
 
+    const total = await db.collection<Note>('notes').countDocuments(filter);
+
     const notes = await db
       .collection<Note>('notes')
       .find(filter)
       .sort({ updatedAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .toArray();
 
     const serializedNotes = notes.map((note) => ({
@@ -26,7 +32,15 @@ export async function GET(request: Request) {
       updatedAt: note.updatedAt.toISOString(),
     }));
 
-    return NextResponse.json(serializedNotes);
+    return NextResponse.json({
+      notes: serializedNotes,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error('Error fetching notes:', error);
     return NextResponse.json(
