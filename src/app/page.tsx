@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Note, NoteCategory } from '@/types/note';
+import { Note, NoteTag } from '@/types/note';
 import NoteList from '@/components/NoteList';
 import NoteEditor from '@/components/NoteEditor';
 import CategoryFilter from '@/components/CategoryFilter';
@@ -10,12 +10,18 @@ import DeleteConfirmModal from '@/components/DeleteConfirmModal';
 import Pagination from '@/components/Pagination';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/components/AuthProvider';
+import { apiRequest } from '@/lib/api';
 
 interface PaginationInfo {
   page: number;
   limit: number;
   total: number;
   totalPages: number;
+}
+
+interface NotesResponse {
+  notes: Note[];
+  pagination: PaginationInfo;
 }
 
 export default function Home() {
@@ -27,7 +33,7 @@ export default function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<NoteCategory | null>(null);
+  const [selectedTag, setSelectedTag] = useState<NoteTag | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationInfo | null>(null);
 
@@ -41,20 +47,19 @@ export default function Home() {
     if (user) {
       fetchNotes();
     }
-  }, [selectedCategory, currentPage, user]);
+  }, [selectedTag, currentPage, user]);
 
   const fetchNotes = async () => {
     try {
-      const url = selectedCategory
-        ? `/api/notes?category=${selectedCategory}&page=${currentPage}&limit=12`
-        : `/api/notes?page=${currentPage}&limit=12`;
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: '12',
+        ...(selectedTag && { tags: selectedTag }),
+      });
 
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        setNotes(data.notes);
-        setPagination(data.pagination);
-      }
+      const data = await apiRequest<NotesResponse>(`/notes?${params.toString()}`);
+      setNotes(data.notes);
+      setPagination(data.pagination);
     } catch (error) {
       console.error('Error fetching notes:', error);
     } finally {
@@ -62,25 +67,26 @@ export default function Home() {
     }
   };
 
-  const handleSaveNote = async (title: string, content: string, category: NoteCategory) => {
+  const handleSaveNote = async (title: string, content: string, tag: NoteTag) => {
     try {
-      const url = editingNote ? `/api/notes/${editingNote._id}` : '/api/notes';
-      const method = editingNote ? 'PUT' : 'POST';
+      const url = editingNote ? `/notes/${editingNote._id}` : '/notes';
+      const method = editingNote ? 'PATCH' : 'POST';
 
-      const response = await fetch(url, {
+      const body: { title: string; content: string; tag?: NoteTag } = {
+        title,
+        content,
+        tag,
+      };
+
+      await apiRequest(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, content, category }),
+        body: JSON.stringify(body),
       });
 
-      if (response.ok) {
-        setCurrentPage(1);
-        await fetchNotes();
-        setIsEditorOpen(false);
-        setEditingNote(null);
-      }
+      setCurrentPage(1);
+      await fetchNotes();
+      setIsEditorOpen(false);
+      setEditingNote(null);
     } catch (error) {
       console.error('Error saving note:', error);
     }
@@ -100,13 +106,10 @@ export default function Home() {
     if (!noteToDelete) return;
 
     try {
-      const response = await fetch(`/api/notes/${noteToDelete._id}`, {
+      await apiRequest(`/notes/${noteToDelete._id}`, {
         method: 'DELETE',
       });
-
-      if (response.ok) {
-        await fetchNotes();
-      }
+      await fetchNotes();
     } catch (error) {
       console.error('Error deleting note:', error);
     } finally {
@@ -129,8 +132,8 @@ export default function Home() {
     setCurrentPage(page);
   };
 
-  const handleCategorySelect = (category: NoteCategory | null) => {
-    setSelectedCategory(category);
+  const handleCategorySelect = (tag: NoteTag | null) => {
+    setSelectedTag(tag);
     setCurrentPage(1);
   };
 
@@ -161,7 +164,7 @@ export default function Home() {
         </div>
 
         <CategoryFilter
-          selectedCategory={selectedCategory}
+          selectedCategory={selectedTag}
           onSelectCategory={handleCategorySelect}
         />
 

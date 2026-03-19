@@ -1,14 +1,14 @@
 'use client';
 
-import { Note, NoteCategory, NOTE_CATEGORIES } from '@/types/note';
+import { Note, NoteTag, NOTE_TAGS } from '@/types/note';
 
 interface NoteEditorProps {
   note?: Note | null;
-  onSave: (title: string, content: string, category: NoteCategory) => void;
+  onSave: (title: string, content: string, tag: NoteTag) => void;
   onCancel: () => void;
 }
 
-const categoryColors: Record<NoteCategory, string> = {
+const tagColors: Record<NoteTag, string> = {
   Todo: 'bg-red-100 text-red-800 border-red-300',
   Work: 'bg-blue-100 text-blue-800 border-blue-300',
   Personal: 'bg-green-100 text-green-800 border-green-300',
@@ -25,8 +25,8 @@ export default function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) 
     const form = e.target as HTMLFormElement;
     const title = (form.elements.namedItem('title') as HTMLInputElement).value;
     const content = (form.elements.namedItem('content') as HTMLTextAreaElement).value;
-    const category = (form.elements.namedItem('category') as HTMLSelectElement).value as NoteCategory;
-    onSave(title, content, category);
+    const tag = (form.elements.namedItem('tag') as HTMLSelectElement).value as NoteTag;
+    onSave(title, content, tag);
   };
 
   return (
@@ -36,7 +36,7 @@ export default function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) 
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             {note ? 'Edit Note' : 'Create Note'}
           </h2>
-          
+
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
               Title
@@ -53,19 +53,19 @@ export default function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) 
           </div>
 
           <div className="mb-4">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-              Category
+            <label htmlFor="tag" className="block text-sm font-medium text-gray-700 mb-2">
+              Tag
             </label>
             <select
-              id="category"
-              name="category"
-              defaultValue={note?.category || 'Personal'}
+              id="tag"
+              name="tag"
+              defaultValue={note?.tag || 'Personal'}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               required
             >
-              {NOTE_CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+              {NOTE_TAGS.map((t) => (
+                <option key={t} value={t}>
+                  {t}
                 </option>
               ))}
             </select>

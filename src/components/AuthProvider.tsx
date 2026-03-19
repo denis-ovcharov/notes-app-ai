@@ -1,17 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-interface User {
-  userId: string;
-  username: string;
-}
+import { User, AuthTokens } from '@/types/user';
+import { apiRequest, setAuthTokens, getAuthTokens, removeAuthTokens } from '@/lib/api';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
-  register: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -26,57 +23,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function fetchUser() {
+    const tokens = getAuthTokens();
+    if (!tokens?.accessToken) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/auth/me');
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-      } else if (response.status === 401) {
-        // Not authenticated - this is expected on initial load
-        setUser(null);
-      }
+      const data = await apiRequest<{ user: User }>('/auth/me');
+      setUser(data.user);
     } catch (error) {
       console.error('Error fetching user:', error);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function login(username: string, password: string) {
-    const response = await fetch('/api/auth/login', {
+  async function login(email: string, password: string) {
+    const data = await apiRequest<{ user: User } & AuthTokens>('/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || 'Login failed');
-    }
-
-    const data = await response.json();
+    setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
     setUser(data.user);
   }
 
-  async function register(username: string, password: string) {
-    const response = await fetch('/api/auth/register', {
+  async function register(email: string, password: string) {
+    const data = await apiRequest<{ user: User } & AuthTokens>('/auth/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
 
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || 'Registration failed');
-    }
-
-    const data = await response.json();
+    setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
     setUser(data.user);
   }
 
   async function logout() {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
+    try {
+      await apiRequest('/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      removeAuthTokens();
+      setUser(null);
+    }
   }
 
   return (

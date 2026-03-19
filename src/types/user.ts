@@ -1,14 +1,11 @@
-import { ObjectId } from 'mongodb';
-
 export interface User {
-  _id?: ObjectId | string;
-  username: string;
-  password: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  _id: string;
+  email: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface UserSession {
-  userId: string;
-  username: string;
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
 }

@@ -22,7 +22,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <span className="text-gray-600 hidden sm:inline">
-                  {user.username}
+                  {user.email}
                 </span>
                 <Link
                   href="/profile"

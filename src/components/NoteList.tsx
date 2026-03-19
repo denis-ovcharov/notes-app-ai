@@ -1,6 +1,6 @@
 'use client';
 
-import { Note, NoteCategory } from '@/types/note';
+import { Note, NoteTag } from '@/types/note';
 
 interface NoteListProps {
   notes: Note[];
@@ -8,7 +8,7 @@ interface NoteListProps {
   onDelete: (note: Note) => void;
 }
 
-const categoryColors: Record<NoteCategory, string> = {
+const tagColors: Record<NoteTag, string> = {
   Todo: 'bg-red-100 text-red-800',
   Work: 'bg-blue-100 text-blue-800',
   Personal: 'bg-green-100 text-green-800',
@@ -40,9 +40,11 @@ export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
             <h3 className="text-lg font-semibold text-gray-800 truncate flex-1">
               {note.title}
             </h3>
-            <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${categoryColors[note.category]}`}>
-              {note.category}
-            </span>
+            {note.tag && (
+              <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${tagColors[note.tag]}`}>
+                {note.tag}
+              </span>
+            )}
           </div>
           <p className="text-gray-600 text-sm mb-4 line-clamp-3">
             {note.content}

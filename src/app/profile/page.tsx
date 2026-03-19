@@ -44,10 +44,10 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Login
+                Email
               </label>
               <div className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800">
-                {user.username}
+                {user.email}
               </div>
             </div>
 

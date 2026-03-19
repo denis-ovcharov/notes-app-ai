@@ -1,4 +1,4 @@
-export type NoteCategory = 
+export type NoteTag =
   | 'Todo'
   | 'Work'
   | 'Personal'
@@ -8,7 +8,7 @@ export type NoteCategory =
   | 'Health'
   | 'Finance';
 
-export const NOTE_CATEGORIES: NoteCategory[] = [
+export const NOTE_TAGS: NoteTag[] = [
   'Todo',
   'Work',
   'Personal',
@@ -20,11 +20,11 @@ export const NOTE_CATEGORIES: NoteCategory[] = [
 ];
 
 export interface Note {
-  _id?: string;
+  _id: string;
   title: string;
   content: string;
-  category: NoteCategory;
+  tag?: NoteTag;
   userId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

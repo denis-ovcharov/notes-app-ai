@@ -1,13 +1,13 @@
 'use client';
 
-import { NoteCategory, NOTE_CATEGORIES } from '@/types/note';
+import { NoteTag, NOTE_TAGS } from '@/types/note';
 
 interface CategoryFilterProps {
-  selectedCategory: NoteCategory | null;
-  onSelectCategory: (category: NoteCategory | null) => void;
+  selectedCategory: NoteTag | null;
+  onSelectCategory: (category: NoteTag | null) => void;
 }
 
-const categoryColors: Record<NoteCategory, string> = {
+const tagColors: Record<NoteTag, string> = {
   Todo: 'bg-red-100 text-red-800 border-red-300',
   Work: 'bg-blue-100 text-blue-800 border-blue-300',
   Personal: 'bg-green-100 text-green-800 border-green-300',
@@ -31,17 +31,17 @@ export default function CategoryFilter({ selectedCategory, onSelectCategory }: C
       >
         All
       </button>
-      {NOTE_CATEGORIES.map((category) => (
+      {NOTE_TAGS.map((tag) => (
         <button
-          key={category}
-          onClick={() => onSelectCategory(category)}
+          key={tag}
+          onClick={() => onSelectCategory(tag)}
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border cursor-pointer ${
-            selectedCategory === category
+            selectedCategory === tag
               ? 'bg-gray-800 text-white border-gray-800'
-              : `${categoryColors[category]} hover:opacity-80`
+              : `${tagColors[tag]} hover:opacity-80`
           }`}
         >
-          {category}
+          {tag}
         </button>
       ))}
     </div>
