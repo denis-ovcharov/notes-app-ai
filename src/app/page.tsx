@@ -57,9 +57,9 @@ export default function Home() {
         ...(selectedTag && { tags: selectedTag }),
       });
 
-      const data = await apiRequest<NotesResponse>(`/notes?${params.toString()}`);
-      setNotes(data.notes);
-      setPagination(data.pagination);
+      const response = await apiRequest<{ data: { notes: Note[]; pagination: PaginationInfo } }>(`/notes?${params.toString()}`);
+      setNotes(response.data.notes);
+      setPagination(response.data.pagination);
     } catch (error) {
       console.error('Error fetching notes:', error);
     } finally {
