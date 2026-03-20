@@ -167,10 +167,10 @@ export default function Home() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--color-charcoal)] via-[#3D3530] to-[#4A3F38] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 animate-fade-in">
-          <div className="w-12 h-12 border-4 border-[var(--color-light-gray)] border-t-[var(--color-terracotta)] rounded-full animate-spin"></div>
-          <p className="text-[var(--color-warm-gray)]">Loading your notes...</p>
+          <div className="w-12 h-12 border-4 border-white/20 border-t-[var(--color-terracotta)] rounded-full animate-spin"></div>
+          <p className="text-white/70">Loading your notes...</p>
         </div>
       </div>
     );
@@ -181,15 +181,15 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--color-charcoal)] via-[#3D3530] to-[#4A3F38]">
       <Navbar />
       <main className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10 animate-fade-in-up">
           <div>
-            <h1 className="font-display text-4xl font-bold text-[var(--color-charcoal)]">
+            <h1 className="font-display text-4xl font-bold text-white">
               My Notes
             </h1>
-            <p className="text-[var(--color-warm-gray)] mt-1">
+            <p className="text-white/60 mt-1">
               {pagination ? `${pagination.total} notes captured` : 'Your thoughts, organized'}
             </p>
           </div>
@@ -212,8 +212,8 @@ export default function Home() {
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="flex flex-col items-center gap-4 animate-fade-in">
-              <div className="w-10 h-10 border-3 border-[var(--color-light-gray)] border-t-[var(--color-terracotta)] rounded-full animate-spin"></div>
-              <p className="text-[var(--color-warm-gray)]">Loading notes...</p>
+              <div className="w-10 h-10 border-3 border-white/20 border-t-[var(--color-terracotta)] rounded-full animate-spin"></div>
+              <p className="text-white/60">Loading notes...</p>
             </div>
           </div>
         ) : (
