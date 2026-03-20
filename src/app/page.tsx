@@ -75,8 +75,12 @@ export default function Home() {
       const body: { title: string; content: string; tag?: NoteTag } = {
         title,
         content,
-        tag,
       };
+
+      // Only include tag if it's provided
+      if (tag) {
+        body.tag = tag;
+      }
 
       await apiRequest(url, {
         method,
