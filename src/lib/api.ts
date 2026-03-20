@@ -70,14 +70,10 @@ export async function apiRequest<T>(
     headers['Authorization'] = `Bearer ${tokens.accessToken}`;
   }
 
-  console.log(`API Request: ${endpoint}`, { method: options.method || 'GET', headers });
-
   let response = await fetch(`${BACKEND_URL}${endpoint}`, {
     ...options,
     headers,
   });
-
-  console.log(`API Response: ${endpoint}`, { status: response.status });
 
   // If unauthorized, try to refresh token and retry once
   if (response.status === 401 && tokens?.refreshToken) {
@@ -93,13 +89,10 @@ export async function apiRequest<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: 'Request failed' }));
-    console.error('API Error:', error);
     throw new Error(error.message || `HTTP ${response.status}`);
   }
 
-  const data = await response.json();
-  console.log('API Data:', data);
-  return data;
+  return response.json();
 }
 
 export function setAuthTokens(tokens: AuthTokens): void {

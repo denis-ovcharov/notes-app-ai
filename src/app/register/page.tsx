@@ -35,13 +35,10 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      console.log('Starting registration...');
       await register(email, password);
-      console.log('Registration successful, redirecting...');
       router.push('/');
       router.refresh();
     } catch (err) {
-      console.error('Registration error:', err);
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setIsLoading(false);

@@ -41,33 +41,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    console.log('Login called with:', email);
     const response = await apiRequest<{ data: { user: User; accessToken: string; refreshToken: string } }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    console.log('Login response:', response);
 
     const { user, accessToken, refreshToken } = response.data;
     setAuthTokens({ accessToken, refreshToken });
     setUser(user);
     setIsLoading(false);
-    console.log('User set:', user);
   }
 
   async function register(email: string, password: string) {
-    console.log('Register called with:', email);
     const response = await apiRequest<{ data: { user: User; accessToken: string; refreshToken: string } }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    console.log('Register response:', response);
 
     const { user, accessToken, refreshToken } = response.data;
     setAuthTokens({ accessToken, refreshToken });
     setUser(user);
     setIsLoading(false);
-    console.log('User set:', user);
   }
 
   async function logout() {
