@@ -73,9 +73,10 @@ export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
                 year: 'numeric',
               })}
               {' · '}
-              {new Date(note.updatedAt).toLocaleTimeString('en-US', {
+              {new Date(note.updatedAt).toLocaleTimeString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
+                hour12: false,
               })}
             </span>
             <button
