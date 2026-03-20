@@ -51,13 +51,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function register(email: string, password: string) {
+    console.log('Register called with:', email);
     const data = await apiRequest<{ user: User } & AuthTokens>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+    console.log('Register response:', data);
 
     setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
     setUser(data.user);
+    console.log('User set:', data.user);
   }
 
   async function logout() {
