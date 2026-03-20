@@ -11,6 +11,7 @@ import Pagination from '@/components/Pagination';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/components/AuthProvider';
 import { apiRequest } from '@/lib/api';
+import toast from 'react-hot-toast';
 
 interface PaginationInfo {
   page: number;
@@ -90,8 +91,22 @@ export default function Home() {
       await fetchNotes();
       setIsEditorOpen(false);
       setEditingNote(null);
+
+      toast.success(
+        editingNote ? 'Note updated successfully!' : 'Note created!',
+        {
+          icon: editingNote ? '✏️' : '✨',
+          style: {
+            borderRadius: '12px',
+            background: 'var(--color-warm-white)',
+            color: 'var(--color-charcoal)',
+            border: '1px solid rgba(139, 157, 119, 0.3)',
+          },
+        }
+      );
     } catch (error) {
       console.error('Error saving note:', error);
+      toast.error('Failed to save note. Please try again.');
     }
   };
 
@@ -113,8 +128,18 @@ export default function Home() {
         method: 'DELETE',
       });
       await fetchNotes();
+      toast.success('Note deleted', {
+        icon: '🗑️',
+        style: {
+          borderRadius: '12px',
+          background: 'var(--color-warm-white)',
+          color: 'var(--color-charcoal)',
+          border: '1px solid rgba(199, 93, 58, 0.3)',
+        },
+      });
     } catch (error) {
       console.error('Error deleting note:', error);
+      toast.error('Failed to delete note. Please try again.');
     } finally {
       setIsDeleteModalOpen(false);
       setNoteToDelete(null);
