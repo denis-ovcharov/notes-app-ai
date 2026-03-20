@@ -29,26 +29,18 @@ function GoogleCallbackContent() {
 
     async function handleCallback() {
       try {
-        console.log('Exchanging code for tokens...');
         const data = await googleCallback(authCode);
-        console.log('Tokens received:', data);
         
         setAuthTokens({
           accessToken: data.accessToken,
           refreshToken: data.refreshToken,
         });
-        console.log('Tokens saved, redirecting...');
 
-        window.history.replaceState({}, '', '/auth/google/callback');
-        
-        router.push('/');
-        router.refresh();
+        window.location.href = '/';
       } catch (err) {
-        console.error('OAuth error:', err);
         const message = err instanceof Error ? err.message : 'Authentication failed';
-        setError(message);
         alert(message);
-        router.push('/login');
+        window.location.href = '/login';
       }
     }
 
