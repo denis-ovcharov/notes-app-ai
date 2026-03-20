@@ -51,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { user, accessToken, refreshToken } = response.data;
     setAuthTokens({ accessToken, refreshToken });
     setUser(user);
+    setIsLoading(false);
     console.log('User set:', user);
   }
 
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { user, accessToken, refreshToken } = response.data;
     setAuthTokens({ accessToken, refreshToken });
     setUser(user);
+    setIsLoading(false);
     console.log('User set:', user);
   }
 
