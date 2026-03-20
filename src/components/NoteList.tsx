@@ -72,6 +72,11 @@ export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
                 day: 'numeric',
                 year: 'numeric',
               })}
+              {' · '}
+              {new Date(note.updatedAt).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </span>
             <button
               onClick={(e) => {
