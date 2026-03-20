@@ -8,49 +8,65 @@ interface NoteListProps {
   onDelete: (note: Note) => void;
 }
 
-const tagColors: Record<NoteTag, string> = {
-  Todo: 'bg-red-100 text-red-800',
-  Work: 'bg-blue-100 text-blue-800',
-  Personal: 'bg-green-100 text-green-800',
-  Travel: 'bg-purple-100 text-purple-800',
-  Ideas: 'bg-yellow-100 text-yellow-800',
-  Shopping: 'bg-pink-100 text-pink-800',
-  Health: 'bg-teal-100 text-teal-800',
-  Finance: 'bg-indigo-100 text-indigo-800',
+const tagClasses: Record<NoteTag, string> = {
+  Todo: 'tag-todo',
+  Work: 'tag-work',
+  Personal: 'tag-personal',
+  Travel: 'tag-travel',
+  Ideas: 'tag-ideas',
+  Shopping: 'tag-shopping',
+  Health: 'tag-health',
+  Finance: 'tag-finance',
 };
 
 export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
   if (notes.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">No notes yet. Create your first note!</p>
+      <div className="text-center py-20">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[var(--color-blush)]/30 mb-6">
+          <svg className="w-10 h-10 text-[var(--color-terracotta)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 className="font-display text-xl font-semibold text-[var(--color-charcoal)] mb-2">
+          No notes yet
+        </h3>
+        <p className="text-[var(--color-warm-gray)]">
+          Start capturing your thoughts by clicking &quot;New Note&quot;
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {notes.map((note) => (
+    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {notes.map((note, index) => (
         <div
           key={note._id}
-          className="bg-white rounded-lg shadow-md p-5 hover:shadow-lg transition-shadow cursor-pointer"
+          className={`card p-6 cursor-pointer opacity-0 animate-fade-in-up stagger-${Math.min(index + 1, 5)}`}
           onClick={() => onEdit(note)}
+          style={{ animationFillMode: 'forwards' }}
         >
-          <div className="flex items-start justify-between mb-2">
-            <h3 className="text-lg font-semibold text-gray-800 truncate flex-1">
+          <div className="flex items-start justify-between gap-3 mb-4">
+            <h3 className="font-display text-lg font-semibold text-[var(--color-charcoal)] truncate flex-1">
               {note.title}
             </h3>
             {note.tag && (
-              <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${tagColors[note.tag]}`}>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 ${tagClasses[note.tag]}`}>
                 {note.tag}
               </span>
             )}
           </div>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+          
+          <p className="text-[var(--color-warm-gray)] text-sm mb-5 line-clamp-3 leading-relaxed">
             {note.content}
           </p>
-          <div className="flex justify-between items-center text-xs text-gray-400">
-            <span>
+          
+          <div className="flex justify-between items-center pt-4 border-t border-[var(--color-light-gray)]">
+            <span className="text-xs text-[var(--color-warm-gray)] flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               {new Date(note.updatedAt).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
@@ -62,8 +78,11 @@ export default function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
                 e.stopPropagation();
                 onDelete(note);
               }}
-              className="text-red-500 hover:text-red-700 transition-colors cursor-pointer border border-red-300 px-3 py-1 rounded hover:bg-red-50"
+              className="text-xs text-[var(--color-warm-gray)] hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-50"
             >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
               Delete
             </button>
           </div>

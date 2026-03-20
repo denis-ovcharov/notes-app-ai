@@ -39,13 +39,15 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
   };
 
   return (
-    <div className="flex justify-center items-center gap-2 mb-8">
+    <div className="flex justify-center items-center gap-2">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+        className="px-4 py-2 rounded-xl border border-[var(--color-light-gray)] bg-white text-[var(--color-warm-gray)] hover:border-[var(--color-terracotta-light)] hover:text-[var(--color-charcoal)] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
       >
-        Previous
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
       <div className="flex gap-1">
@@ -53,7 +55,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           page === '...' ? (
             <span
               key={`ellipsis-${index}`}
-              className="px-3 py-2 text-gray-500"
+              className="px-3 py-2 text-[var(--color-warm-gray)]"
             >
               ...
             </span>
@@ -61,10 +63,10 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
             <button
               key={page}
               onClick={() => onPageChange(page as number)}
-              className={`px-4 py-2 rounded-lg transition-colors cursor-pointer ${
+              className={`min-w-[40px] h-10 rounded-xl transition-all duration-300 cursor-pointer ${
                 page === currentPage
-                  ? 'bg-blue-600 text-white'
-                  : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-[var(--color-terracotta)] to-[var(--color-gold)] text-white shadow-md'
+                  : 'border border-[var(--color-light-gray)] bg-white text-[var(--color-warm-gray)] hover:border-[var(--color-terracotta-light)] hover:text-[var(--color-charcoal)]'
               }`}
             >
               {page}
@@ -76,9 +78,11 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+        className="px-4 py-2 rounded-xl border border-[var(--color-light-gray)] bg-white text-[var(--color-warm-gray)] hover:border-[var(--color-terracotta-light)] hover:text-[var(--color-charcoal)] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
       >
-        Next
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
       </button>
     </div>
   );

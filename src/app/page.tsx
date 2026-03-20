@@ -77,7 +77,6 @@ export default function Home() {
         content,
       };
 
-      // Only include tag if it's provided
       if (tag) {
         body.tag = tag;
       }
@@ -143,8 +142,11 @@ export default function Home() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 animate-fade-in">
+          <div className="w-12 h-12 border-4 border-[var(--color-light-gray)] border-t-[var(--color-terracotta)] rounded-full animate-spin"></div>
+          <p className="text-[var(--color-warm-gray)]">Loading your notes...</p>
+        </div>
       </div>
     );
   }
@@ -154,16 +156,26 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold text-gray-800">My Notes</h1>
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10 animate-fade-in-up">
+          <div>
+            <h1 className="font-display text-4xl font-bold text-[var(--color-charcoal)]">
+              My Notes
+            </h1>
+            <p className="text-[var(--color-warm-gray)] mt-1">
+              {pagination ? `${pagination.total} notes captured` : 'Your thoughts, organized'}
+            </p>
+          </div>
           <button
             onClick={() => setIsEditorOpen(true)}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md cursor-pointer"
+            className="btn-primary flex items-center gap-2 group"
           >
-            + New Note
+            <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            New Note
           </button>
         </div>
 
@@ -173,26 +185,33 @@ export default function Home() {
         />
 
         {isLoading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="flex items-center justify-center py-20">
+            <div className="flex flex-col items-center gap-4 animate-fade-in">
+              <div className="w-10 h-10 border-3 border-[var(--color-light-gray)] border-t-[var(--color-terracotta)] rounded-full animate-spin"></div>
+              <p className="text-[var(--color-warm-gray)]">Loading notes...</p>
+            </div>
           </div>
         ) : (
           <>
-            {pagination && (
-              <Pagination
-                currentPage={pagination.page}
-                totalPages={pagination.totalPages}
-                onPageChange={handlePageChange}
-              />
+            {pagination && pagination.totalPages > 1 && (
+              <div className="mb-6 animate-fade-in">
+                <Pagination
+                  currentPage={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
             )}
-            <NoteList
-              notes={notes}
-              onEdit={handleEditNote}
-              onDelete={handleDeleteNote}
-            />
+            <div className="animate-fade-in-up">
+              <NoteList
+                notes={notes}
+                onEdit={handleEditNote}
+                onDelete={handleDeleteNote}
+              />
+            </div>
           </>
         )}
-      </div>
+      </main>
 
       {isEditorOpen && (
         <NoteEditor

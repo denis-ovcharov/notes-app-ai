@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Note, NoteTag, NOTE_TAGS } from '@/types/note';
 
 interface NoteEditorProps {
@@ -20,83 +21,129 @@ const tagColors: Record<NoteTag, string> = {
 };
 
 export default function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [tag, setTag] = useState<NoteTag>('Personal');
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (note) {
+      setTitle(note.title);
+      setContent(note.content);
+      setTag(note.tag || 'Personal');
+    }
+    setTimeout(() => setIsVisible(true), 10);
+  }, [note]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const title = (form.elements.namedItem('title') as HTMLInputElement).value;
-    const content = (form.elements.namedItem('content') as HTMLTextAreaElement).value;
-    const tag = (form.elements.namedItem('tag') as HTMLSelectElement).value as NoteTag;
     onSave(title, content, tag);
   };
 
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(onCancel, 300);
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <form onSubmit={handleSubmit} className="p-6">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">
-            {note ? 'Edit Note' : 'Create Note'}
-          </h2>
-
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              defaultValue={note?.title || ''}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              placeholder="Enter note title..."
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="tag" className="block text-sm font-medium text-gray-700 mb-2">
-              Tag
-            </label>
-            <select
-              id="tag"
-              name="tag"
-              defaultValue={note?.tag || 'Personal'}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              required
-            >
-              {NOTE_TAGS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-              Content
-            </label>
-            <textarea
-              id="content"
-              name="content"
-              defaultValue={note?.content || ''}
-              rows={8}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-              placeholder="Write your note here..."
-              required
-            />
-          </div>
-
-          <div className="flex justify-end gap-3">
+    <div 
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      onClick={(e) => e.target === e.currentTarget && handleClose()}
+    >
+      <div className="absolute inset-0 bg-[var(--color-charcoal)]/60 backdrop-blur-sm"></div>
+      
+      <div 
+        className={`relative w-full max-w-xl bg-[var(--color-warm-white)] rounded-3xl shadow-2xl transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+      >
+        <form onSubmit={handleSubmit} className="p-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="font-display text-2xl font-bold text-[var(--color-charcoal)]">
+              {note ? 'Edit Note' : 'New Note'}
+            </h2>
             <button
               type="button"
-              onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
+              onClick={handleClose}
+              className="p-2 rounded-full hover:bg-[var(--color-light-gray)] transition-colors cursor-pointer"
+            >
+              <svg className="w-5 h-5 text-[var(--color-warm-gray)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="space-y-5">
+            <div>
+              <label htmlFor="title" className="block text-sm font-semibold text-[var(--color-charcoal)] mb-2">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="input-field"
+                placeholder="Give your note a title..."
+                required
+              />
+            </div>
+
+            <div>
+              <label htmlFor="tag" className="block text-sm font-semibold text-[var(--color-charcoal)] mb-2">
+                Category
+              </label>
+              <div className="relative">
+                <select
+                  id="tag"
+                  value={tag}
+                  onChange={(e) => setTag(e.target.value as NoteTag)}
+                  className="input-field appearance-none pr-10 cursor-pointer"
+                >
+                  {NOTE_TAGS.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-[var(--color-warm-gray)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+              {tag && (
+                <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${tagColors[tag]}`}>
+                  {tag}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="content" className="block text-sm font-semibold text-[var(--color-charcoal)] mb-2">
+                Content
+              </label>
+              <textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={6}
+                className="input-field resize-none"
+                placeholder="What's on your mind?"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 mt-8">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="btn-secondary cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+              className="btn-primary cursor-pointer"
             >
               {note ? 'Save Changes' : 'Create Note'}
             </button>
