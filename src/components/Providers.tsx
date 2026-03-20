@@ -8,7 +8,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <AuthProvider>
       {children}
       <Toaster
-        position="bottom-right"
+        position="top-center"
         toastOptions={{
           duration: 3000,
           style: {
