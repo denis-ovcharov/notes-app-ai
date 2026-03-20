@@ -107,4 +107,34 @@ export function removeAuthTokens(): void {
   clearTokens();
 }
 
+export async function getGoogleAuthUrl(): Promise<{ url: string }> {
+  const response = await fetch(`${BACKEND_URL}/auth/google`);
+  if (!response.ok) {
+    throw new Error('Failed to get Google auth URL');
+  }
+  const data = await response.json();
+  return data.data;
+}
+
+export async function googleCallback(code: string): Promise<{
+  user: { id: string; email: string };
+  accessToken: string;
+  refreshToken: string;
+  isNewUser: boolean;
+}> {
+  const response = await fetch(`${BACKEND_URL}/auth/google/callback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+  });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'OAuth callback failed' }));
+    throw new Error(error.message || 'OAuth callback failed');
+  }
+  
+  const data = await response.json();
+  return data.data;
+}
+
 export { BACKEND_URL };
