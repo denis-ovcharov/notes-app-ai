@@ -30,8 +30,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const data = await apiRequest<{ user: User }>('/auth/me');
-      setUser(data.user);
+      const response = await apiRequest<{ data: { user: User } }>('/auth/me');
+      setUser(response.data.user);
     } catch (error) {
       console.error('Error fetching user:', error);
       setUser(null);
@@ -41,26 +41,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    const data = await apiRequest<{ user: User } & AuthTokens>('/auth/login', {
+    console.log('Login called with:', email);
+    const response = await apiRequest<{ data: { user: User; accessToken: string; refreshToken: string } }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+    console.log('Login response:', response);
 
-    setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
-    setUser(data.user);
+    const { user, accessToken, refreshToken } = response.data;
+    setAuthTokens({ accessToken, refreshToken });
+    setUser(user);
+    console.log('User set:', user);
   }
 
   async function register(email: string, password: string) {
     console.log('Register called with:', email);
-    const data = await apiRequest<{ user: User } & AuthTokens>('/auth/register', {
+    const response = await apiRequest<{ data: { user: User; accessToken: string; refreshToken: string } }>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    console.log('Register response:', data);
+    console.log('Register response:', response);
 
-    setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
-    setUser(data.user);
-    console.log('User set:', data.user);
+    const { user, accessToken, refreshToken } = response.data;
+    setAuthTokens({ accessToken, refreshToken });
+    setUser(user);
+    console.log('User set:', user);
   }
 
   async function logout() {
